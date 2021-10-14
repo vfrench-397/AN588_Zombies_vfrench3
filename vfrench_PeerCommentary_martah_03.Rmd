@@ -1,0 +1,577 @@
+---
+title: "vfrench_PeerCommentary_martah_03"
+author: "Marta"
+date: "10/14/2021"
+output: html_document
+---
+
+# Homework 3
+
+## Data
+
+Data includes the first name, last name, and gender of the entire population of 1000 people who have survived the zombie apocalypse and are now ekeing out an existence somewhere on the East Coast, along with several other variables (height, weight, age, number of years of education, number of zombies they have killed, and college major;
+
+```{r, read in data set}
+library(curl)
+f<- curl('https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall21/zombies.csv')
+d <- read.csv(f, header=TRUE, stringsAsFactors = FALSE)
+```
+
+```{r, initial look at data}
+str(d)
+```
+
+## Population parameters 
+
+Calculate the population mean and standard deviation for each quantitative random variable (height, weight, age, number of zombies killed, and years of education). NOTE: You will not want to use the built in var() and sd() commands as these are for samples.
+
+### Mean 
+
+Mean = the sum of measured values divided by n = the average or the arithemetic mean
+
+
+### Variance 
+
+Since we cannot use built in R functions we can use the following statements to build our own function in R for population variance. 
+
+sum of squares = the sum of the squared deviations of a set of values from the mean
+
+population variance = sum of squares / N
+
+The standard deviation is simply the square root of the variance
+
+_I liked that you included the definition in your notes, maybe including your functions up here as well will streamline but its great either way -M_
+
+```{r, population variance function}
+popv <- function(x) {
+    sum((x - mean(x))^2)/(length(x))
+}
+```
+
+```{r, population standard deviation function}
+popsd <- function(x) {
+    sqrt(popv(x))
+}
+```
+
+### Calculations
+
+```{r,height parameters}
+hm <- mean(d$height)
+hm
+hsd <- popsd(d$height)
+hsd
+```
+
+```{r,weight parameters}
+wm <- mean(d$weight)
+wm
+wsd <- popsd(d$weight)
+wsd
+```
+
+```{r,age parameters}
+am <- mean(d$age)
+am
+asd <- popsd(d$age)
+asd
+```
+
+```{r,zombies killed parameters}
+zm <- mean(d$zombies_killed)
+zm
+zsd <- popsd(d$zombies_killed)
+zsd
+```
+
+```{r,education parameters}
+em <- mean(d$years_of_education)
+em
+esd <- popsd(d$years_of_education)
+esd
+```
+
+_I like that you assigned variables to these functions instead of just running them! -M_
+
+### Visualizing Data 
+
+Use {ggplot} to make boxplots of each of these variables by gender.
+
+```{r, load ggplot}
+library(ggplot2)
+```
+_I noticed you didn't have a set up r chunk, maybe consider loading all your library commands in the beginning -M_
+
+```{r, height boxplot}
+hbp <- ggplot(d, aes(x = gender, y= height)) #ggplot() initializes a ggplot object. 
+hbp <- hbp + geom_boxplot() #need to add a layer with geom_boxplot to visualize five summary statistics (the median, two hinges and two whiskers), and all "outlying" points individually.
+hbp <- hbp + xlab ('Gender') + ylab ('Height') + theme(text=element_text(size=15))
+
+#I dont think I need to overwrite any of the calculated statistics here because it is not depicting variance? 
+
+#also instead of overwriting you can use the plus to make an elongated formula `ggplot(d, aes) + geom_boxlot() + [fomatting]` -M
+hbp 
+```
+```{r, weight boxplot}
+wbp <- ggplot(d, aes(x=gender, y=weight))
+wbp <- wbp + geom_boxplot()
+wbp <- wbp + xlab ('Gender') + ylab ('Weight') + theme(text=element_text(size=15))
+wbp
+```
+```{r, age boxplot}
+abp <- ggplot(d, aes(x=gender, y=age))
+abp <- abp + geom_boxplot()
+abp <- abp + xlab ('Gender') + ylab ('Age') + theme(text=element_text(size=15))
+abp
+```
+```{r, zombies killed boxplot}
+zbp <- ggplot(d, aes(x=gender, y= zombies_killed))
+zbp <- zbp + geom_boxplot()
+zbp <- zbp + xlab ('Gender') + ylab ('Zombies Killed') + theme(text=element_text(size=15))
+zbp
+```
+```{r, education boxplot}
+ebp <- ggplot(d, aes(x=gender, y= years_of_education))
+ebp <- ebp + geom_boxplot()
+ebp <- ebp + theme(text=element_text(size=15))
+ebp <- ebp + xlab ('Gender') + ylab ('Education (years)') 
+ebp
+```
+
+Use {ggplot} to make scatterplots of height and weight in relation to age. Do these variables seem to be related? In what way?
+
+A relatively strong positive linear relationship between height and age. 
+```{r, height scatterplot}
+hsp <- ggplot(d, aes(x=age, y=height)) #create a ggplot object
+hsp <- hsp + geom_point(col='forest green') #create scatterplot #col= calls color
+hsp <- hsp + geom_smooth(method = 'lm', col='pink') #add a linear regression line
+#i mentioned earlier combining them but now that i see here how you combined the two plots i am curious, does this not work when attempting to type in long form? if so i would ignore my previous comment to overwrite the variable everytime -M
+hsp <- hsp + theme(text=element_text(size=15)) + ylab('Height') + xlab('Age') #theme lets you adjust any non data elements including font size, color, family etc. 
+hsp
+```
+
+A relatively strong positive linear relationship between weight and age. 
+
+```{r, weight scatterplot}
+wsp <- ggplot(d, aes(x=age, y=weight))
+wsp <- wsp + geom_point(col='navy')
+wsp <- wsp + geom_smooth(method = 'lm', col= 'maroon')
+wsp <- wsp + theme(text=element_text(size=15)) + ylab('Weight') + xlab('Age')
+wsp
+```
+
+We can also look at the relationship between height and weight grouped by age. We see a strong positive linear relationship but we can't see any real distinctive patterns by age. 
+_The spread of the outliers seem to indicate there isn't really a strong linear relationship but it's confusing me because that isn't necessarily the conclusion that comes form the graph. -M_
+
+```{r}
+age.r <- round(d$age) #round up ages to a whole number 
+sp <- ggplot(d, aes(x=height, y= weight, color = factor(age.r))) #coloring by age is creating a lot of noise, too many possible ages. Might be neater to group ages. Unsure how to do that. 
+sp <- sp + geom_point()
+#sp <- sp + geom_smooth(method = 'lm') #creates a regression line for every age, again too much noise
+sp <- sp + theme(axis.title=element_text(size=15), legend.position = 'bottom')  + labs(x= 'Height', y='Weight', color= 'Age') #color changes the legend title manually. 
+sp
+```
+_This is gorgeous! -M_
+
+### Checking for Normality 
+
+Using histograms and Q-Q plots, check whether the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not (hint: not all are drawn from the normal distribution)? For those that are not normal, can you determine from which common distribution they are drawn?
+
+```{r, height histogram}
+hist(d$height, main = 'Survivor Heights', xlab= 'Height')
+```
+
+- A  “Q-Q” plot can be used to look at the normality of a set of data. You can plot the quantiles for your actual data (as the y values) versus quantiles for a correspondingly standardized normal distribution (as the x values). If the two distributions being compared are similar, the points in the plot will approximately lie on the line y = x.
+
+```{r, height QQ plot}
+qqnorm(d$height) #to generate a qq plot just call the qq norm function for your variable of interest. 
+qqline(d$height) # adds a best fit line along which the generated and actual data regression should lie. 
+```
+
+Therefore based on the histogram of our actual data and the QQ plot we can assume height in this population is normally distributed. 
+
+```{r, weight histogram}
+hist(d$weight,  main = 'Survivor Weights', xlab= 'Weight')
+```
+
+```{r, weight qq plot}
+qqnorm(d$weight)
+qqline(d$weight)
+```
+
+The histogram hints that weight is skewed to the left but the qq plot confirms a normal distribution of weight. 
+_nice note on the skew i would have missed that -M_
+
+```{r, age histogram}
+hist(d$age,  main = 'Survivor Ages', xlab= 'Age')
+```
+
+```{r, age qq plot}
+qqnorm(d$age)
+qqline(d$age)
+```
+
+Age is normally distributed. 
+
+```{r, zombies histogram}
+hist(d$zombies_killed, main = 'Zombies Killed by Survivors', xlab= 'Zombies Killed')
+```
+
+```{r, zombies qq plot}
+qqnorm(d$zombies_killed)
+qqline(d$zombies_killed)
+```
+
+Zombies killed are not normally distributed. From the histogram it looks like this data is following a binomial distribution which is rationale as it starts at 0 and has discrete values based on a number of quanitified successes (kills). Since they are discrete counts there is also a possibility that it could be following a Poisson distribution but I think binomial fits the data better.
+_I am still struggling to understand the variety of distribution so this might be incorrect but one of the reasons i eliminated binomial was due to the compounding `one or the other` way its set up. There isn't a set max to zombie kills so i would lean more in the poisson direction pun intended -M_
+
+```{r, education histogram}
+hist(d$years_of_education,  main = 'Survivors Education', xlab= 'Education (years)')
+```
+```{r, education qq plot}
+qqnorm(d$years_of_education)
+qqline(d$years_of_education)
+```
+
+Years of education is not normally distributed. It looks very similarly distributed when compared to the zombies killed data and for the same logic I would assume years of education is following a binomial distribution. 
+_agreed! -M_
+
+## Sample Statistics 
+
+Now use the sample() function to sample ONE subset of 30 zombie survivors (without replacement) from this population.
+
+```{r}
+set.seed(1) 
+sample.d <- d[sample(1:nrow(d),30,replace = FALSE), ] #subsetting data frame d so that it only consists of a random sample of 30 rows. replacement is set to FALSE. 
+rownames(sample.d) <- c() #removing row names that were assigned during subsetting. Not necessary as they are already catalogged under id variable. 
+sample.d
+```
+
+### Sample Mean 
+
+Calculate the mean for each variable.
+
+```{r, height sample mean}
+hmu <- mean(sample.d$height)
+hmu
+```
+
+```{r, weight sample mean}
+wmu <- mean(sample.d$weight)
+wmu
+```
+
+```{r, age sample mean}
+amu <- mean(sample.d$age)
+amu
+```
+
+```{r, zombie sample mean}
+zmu <- mean(sample.d$zombies_killed)
+zmu
+```
+
+```{r, education sample mean}
+emu <- mean(sample.d$years_of_education)
+emu
+```
+
+### Sample Standard Deviation 
+
+Calculate the standard deviation for each variable.
+
+The standard deviation is simply the square root of the variance. Where the sample variance = estimator of the population variance = sum of squares / (n - 1). Using this information we can write our own functions. 
+
+```{r, sample variance function}
+samplev <- function(x) {
+    sum((x - mean(x))^2)/(length(x) - 1)
+}
+```
+
+```{r, sample standard deviation function}
+sample.sd <- function(x) {
+    sqrt(samplev(x))
+}
+```
+
+OR we can use the built in R functions as we are now using sample data. 
+
+```{r, height sample sd}
+sample.sd(sample.d$height)
+hsig <- sd(sample.d$height)
+hsig
+```
+
+```{r, weight sample sd}
+sample.sd(sample.d$weight)
+wsig <- sd(sample.d$weight)
+wsig
+```
+
+```{r, age sample sd}
+sample.sd(sample.d$age)
+asig <- sd(sample.d$age)
+asig
+```
+
+```{r, zombies sample sd}
+sample.sd(sample.d$zombies_killed)
+zsig <- sd(sample.d$zombies_killed)
+zsig
+```
+
+```{r, education sample sd}
+sample.sd(sample.d$years_of_education)
+esig <- sd(sample.d$years_of_education)
+esig
+```
+_I really like that you took the time o define and write the function yourself! The sample data threw me for a loop and I didn't really understand how this variance was different so thank you! -M_
+
+### Standard Error
+
+Estimate the standard error for each variable. 
+
+The standard error of the mean can be defined as SE mean = square root of (sample variance / number of observations).  
+
+We can use this to write the following function. 
+
+```{r, standard error of the mean function}
+SEM <- function(x) {
+    sqrt(var(x)/length(x))
+}
+```
+
+```{r, height standard error of the mean}
+hse <- SEM(sample.d$height)
+hse
+```
+
+```{r, weight standard error}
+wse <- SEM(sample.d$weight)
+wse
+```
+
+```{r, age standard error}
+ase <- SEM(sample.d$age)
+ase
+```
+
+```{r, zombie standard error}
+zse <- SEM(sample.d$zombies_killed)
+zse
+```
+
+```{r}
+ese <- SEM(sample.d$years_of_education)
+ese
+```
+
+### Confidence Intervals 
+
+Construct the 95% confidence interval for each mean. Note that for the variables that are not drawn from the normal distribution, you may need to base your estimate of the CIs on slightly different code than for the normal…
+
+#### Normally Distributed variables (height, weight, age)
+
+CI = statistic +- critical value * standard error 
+
+In this case we will use the sample mean as our statistic and we will assume a critical value of .05 (or CI level of .95). Since the data is normally distributed we can use the qnorm function to tell us the cumulative probability for the specified confidence level/critical value. We divide the critical value by 2 for the calculations because we total the upper and lower tails to get the total critical value. 
+
+Therefore we can use the following function: 
+```{r, Confidence Interval function}
+
+normalCI <-  function(x, CIlevel = 0.95) {
+    upper = mean(x) + qnorm(1 - (1 - CIlevel)/2) * sqrt(var(x)/length(x))
+    lower = mean(x) + qnorm((1 - CIlevel)/2) * sqrt(var(x)/length(x))
+    ci <- c(lower, upper)
+    return(ci)
+} #admittedly you lost me here- i'm confused when it comes to using CIs so i won't be much help in commenting, the tails look excellent though! -M
+```
+
+```{r, height CI}
+hCI <- normalCI(sample.d$height)
+hCI
+```
+
+```{r, weight CI}
+wCI <- normalCI(sample.d$weight)
+wCI
+```
+
+```{r, age CI}
+aCI <- normalCI(sample.d$age)
+aCI
+```
+
+#### Non-normal variables (Zombies killed, years of education)
+
+Simulation allows us to calculate CIs without assuming a normal distribution. 
+
+```{r, zombie simulation}
+zset <- NULL  # sets up a dummy variable to hold our 10000 simulations
+n <- 30 #our sample size, the amount of numbers taken from out sample (with replacement)
+for (i in 1:10000) {
+    zset[i] <- mean(sample(sample.d$zombies_killed, n, replace = TRUE))
+} #read as: sample the vector sample.d$zombies killed 30 times then take the mean. Repeat this 10,000 times and for each time place the output in the set zset. 
+```
+
+The quantile() function will give us the number of observations out of the 10,000 samples that satisfy a specific quantile or CI level. We want a CI interval of 95% confidence. 
+
+```{r, zombie CI}
+zCI <- quantile(zset, c(0.025, 0.975))
+zCI
+```
+_i don't think you need to do this but is `c(0.025, 0.975)` functionally the same as if you were to assign it to `alpha`? -M_
+
+```{r, education simulation}
+eset <- NULL 
+n <- 30 
+for (i in 1:10000) {
+    eset[i] <- mean(sample(sample.d$years_of_education, n, replace = TRUE))
+}
+```
+
+```{r, education CI}
+eCI <- quantile(eset, c(0.025, 0.975))
+eCI
+```
+
+## Sampling Distributions 
+
+### Loop Sampling
+
+Question 6. 
+
+Here we generate 99 more samples of 30 from the population data and place it into a list called set.100 
+
+```{r, 99 samples}
+set.100 <- NULL 
+for (i in 1:99) {
+  set.100[[i]] <- 
+     d[sample(1:nrow(d),30,replace = FALSE), ]
+} #Since you are creating a list you need to subset it by using double brackets instead of single. 
+```
+
+To complete the list we add in our original sample as the 100th element
+```{r, add in original sample}
+set.100[[100]] <- sample.d 
+```
+
+### Calculating the Sampling Distribution
+
+We then take the mean of a specified variable for all 100 samples to create a sampling distribution for that variable. 
+
+```{r, height sampling distribution}
+h.sampling.distribution <- NULL
+for (i in 1:100) {
+  h.sampling.distribution [i] <- mean(set.100[[i]][ ,'height'])
+} #read as: take the mean of the column titled height for each element of set.100 from 1 to 100 and pipe that into elements 1:100 of a new set called h.sampling.distribution. 
+```
+_!!! Setting this up as a for loop is great!! -M_
+
+```{r, weight sampling distribution}
+w.sampling.distribution <- NULL
+for (i in 1:100) {
+  w.sampling.distribution [i] <- mean(set.100[[i]][ ,'weight'])
+}
+```
+
+```{r, age sampling distribution}
+a.sampling.distribution <- NULL
+for (i in 1:100) {
+  a.sampling.distribution [i] <- mean(set.100[[i]][ ,'age'])
+}
+```
+
+```{r, zombie sampling distribution}
+z.sampling.distribution <- NULL
+for (i in 1:100) {
+  z.sampling.distribution [i] <- mean(set.100[[i]][ ,'zombies_killed'])
+}
+```
+
+```{r}
+e.sampling.distribution <- NULL
+for (i in 1:100) {
+  e.sampling.distribution [i] <- mean(set.100[[i]][ ,'years_of_education'])
+}
+```
+
+### Sampling Distribution statistics 
+
+What are the means and standard deviations of this distribution of means for each variable? How do the standard deviations of means compare to the standard errors? 
+
+```{r, mean and sd of height sampling distribution}
+mean(h.sampling.distribution)
+sd(h.sampling.distribution)
+```
+_Again, I just have to compliment you on amazing code! This went over my head but seeing how you lay it our is very clean and well done! -M_
+
+standard error estimate from question 5 was 0.6819214 so very close to the sd of the sampling distribution at 0.68911
+
+```{r, mean and sd of weight sampling distribution}
+mean(w.sampling.distribution)
+sd(w.sampling.distribution)
+```
+
+standard error estimate from question 5 was 2.962555 so very close to the sd of the sampling distribution at 3.025924
+
+```{r, mean and sd of age sampling distribution}
+mean(a.sampling.distribution)
+sd(a.sampling.distribution)
+```
+
+standard error estimate from question 5 was 0.5405065 so relatively close to the sd of the sampling distribution at 0.5115346 
+
+```{r, mean and sd of zombie sampling distribution}
+mean(z.sampling.distribution)
+sd(z.sampling.distribution)
+```
+
+standard error estimate from question 5 was 0.3067566 so very close to the sd of the sampling distribution at 0.2912691
+
+```{r, mean and sd of education sampling distribution}
+mean(e.sampling.distribution)
+sd(e.sampling.distribution)
+```
+
+standard error estimate from question 5 was 0.3088106 so very close to the sd of the sampling distribution at 0.3073107. 
+
+### Sampling Distribution Visualization 
+
+What do these sampling distributions look like (a graph might help here)? 
+
+```{r, height sampling distribution histogram}
+hist(h.sampling.distribution,  main = 'Height Sampling Distribution', xlab= 'Average height of sample')
+```
+
+```{r, weight sampling distribution histogram}
+hist(w.sampling.distribution,  main = 'Weight Sampling Distribution', xlab= 'Average weight of sample')
+```
+
+```{r, age sampling distribution histogram}
+hist(a.sampling.distribution,  main = 'Age Sampling Distribution', xlab= 'Average Age of sample')
+```
+
+```{r, zombie sampling distribution histogram}
+hist(z.sampling.distribution,  main = 'Killed Zombie Sampling Distribution', xlab= 'Average zombies killed per sample')
+```
+
+```{r, education sampling distribution histogram}
+hist(e.sampling.distribution, main = 'Education Sampling Distribution', xlab= 'Average education (years) of a sample')
+```
+
+Are they normally distributed? What about for those variables that you concluded were not originally drawn from a normal distribution?
+
+Generally they all look somewhat normal. They are not perfectly normal but 30 is a relatively low sample size so it is assumed if n was increased the sampling distribution curves would become more and more normally distributed, even the sampling distributions of the samples that came from non-normally distributed variables. The chart that looks the most normal currently belongs to the zombies_killed variable which was one of the non-normally distributed data sets. 
+
+_Great observation! I think the sheer number of sample also helps even out the histograms even if the sample size is relativly small -M_
+
+# Challenges: 
+1. Understanding what distribution the population random variables came from? Is there a way to test for this or was it just supposed to be from observation?  _Also a question I had, I want to see if there are specialty q-q plots for other distributions or what each distribution looks like on a normal q-q plot -M_
+2. The sample function requires the input of a vector. It was taking the length of the data frame as 10 (variables) instead of 1000 (observations). To use the sample function to sample a number of rows from the data frame I had to first subset the data frame. _Ya I also ran into this problem so I always just subseted the sample function if that makes sense but it was a bit messy, there's probably another way to do it -M_
+3. The looping for question number 6 was particularly difficult but I think most of my problems were with the fact that the loop was generating a list object which meant I needed to subset it using double brackets. Once I realized that the rest was kind of plug and play with the original code given in the modules. _Even more than plug and play, the for loops for the mean and sd were great!! Great solution to the problem -M_
+4. I would love a more in depth tutorial of ggplot because I always get lost. _Same, honestly the cheat sheet online has been helpful instead of using the `?` in R but it has its limits for sure -M_
+
+## Peer Commentary
+
+Once again, I think your code was wonderful! I love that you assign variable to all of your functions it just keeps everything so neat and I think I will start adopting that in my own code. I'm sorry that I couldn't be more help in the smapling but the stuff that I did understand you totally had down. Great job, reall! I can't think of aything that would be changed. -M
