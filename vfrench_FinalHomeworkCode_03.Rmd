@@ -55,6 +55,8 @@ popsd <- function(x) {
 }
 ```
 
+*good*
+
 ### Calculations
 
 ```{r,height parameters}
@@ -154,6 +156,9 @@ sp <- ggplot(d, aes(x=height, y= weight, color = factor(age.r)))  + geom_point()
 sp <- sp + theme(axis.title=element_text(size=15), legend.position = 'bottom')  + labs(x= 'Height', y='Weight', color= 'Age') #color changes the legend title manually presumably because we are factoring a variable by color. 
 sp
 ```
+
+*Lookng for two graphs here, one for age v height and one for age v weight, so you can look for a trend*
+
 
 ### Checking for Normality 
 
@@ -256,6 +261,8 @@ barplot(z.pois.dist)
 ```
 
 So overall my original assumption that the bernoulli distribution was a better fit than the poisson distribution is unlikely based on comparing generated data to the original data set. 
+
+*awesome!*
 
 ## Sample Statistics 
 
@@ -601,4 +608,6 @@ Generally they all look somewhat normal. They are not perfectly normal but 30 is
 1. Understanding what distribution the population random variables came from? Attempting to test for non normal distributions by comparing generated to existing data went well for Poisson but I think I went wrong somewhere generating the Binomial/Bernoulli distributions because they look normally distributed? 
 2. The sample function requires the input of a vector. It was taking the length of the data frame as 10 (variables) instead of 1000 (observations). To use the sample function to sample a number of rows from the data frame I had to first subset the data frame.
 3. The looping for question number 6 was difficult but I think most of my problems were with the fact that the loop was generating a list object which meant I needed to subset it using double brackets. Once I realized that the rest was kind of plug and play with the original code given in the modules. 
-4. I would love a more in depth tutorial of ggplot because I always get lost. There are a lot of additional functions that can get overwhelming but I got where I wanted to go in the end by looking at the cheat sheet.  
+4. I would love a more in depth tutorial of ggplot because I always get lost. There are a lot of additional functions that can get overwhelming but I got where I wanted to go in the end by looking at the cheat sheet.  *https://ggplot2.tidyverse.org/reference/*
+
+*great work!*
