@@ -94,12 +94,6 @@ esd <- popsd(d$years_of_education)
 esd
 ```
 
-OR can put them all in one line of code. 
-
-```{r}
-cbind(mean = apply(s, 2, mean), sd = apply(s, 2, pop_sd))
-```
-
 ### Visualizing Data 
 
 Use {ggplot} to make boxplots of each of these variables by gender.
