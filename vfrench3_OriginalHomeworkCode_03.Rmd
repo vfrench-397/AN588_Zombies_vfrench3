@@ -1,7 +1,7 @@
 ---
 title: "vfrench3_OriginalHomeworkCode_03"
 author: "Victoria French"
-date: "10/7/2021"
+date: "10/14/2021"
 output: 
   html_document:
     toc: true
@@ -103,34 +103,27 @@ library(ggplot2)
 ```{r, height boxplot}
 hbp <- ggplot(d, aes(x = gender, y= height)) #ggplot() initializes a ggplot object. 
 hbp <- hbp + geom_boxplot() #need to add a layer with geom_boxplot to visualize five summary statistics (the median, two hinges and two whiskers), and all "outlying" points individually.
-hbp <- hbp + xlab ('Gender') + ylab ('Height') + theme(text=element_text(size=15))
-
-#I dont think I need to overwrite any of the calculated statistics here because it is not depicting variance? 
+hbp <- hbp + labs(x= 'Gender', y ='Height') +  theme(text=element_text(size=15)) #labs defines labels and theme alows you to adjust any non data elements including font size, color, family etc.
 hbp 
 ```
+
 ```{r, weight boxplot}
-wbp <- ggplot(d, aes(x=gender, y=weight))
-wbp <- wbp + geom_boxplot()
-wbp <- wbp + xlab ('Gender') + ylab ('Weight') + theme(text=element_text(size=15))
+wbp <- ggplot(d, aes(x=gender, y=weight)) + geom_boxplot() + xlab ('Gender') + ylab ('Weight') + theme(text=element_text(size=15)) #can also just write out each element like an equation with one line of code.
 wbp
 ```
+
 ```{r, age boxplot}
-abp <- ggplot(d, aes(x=gender, y=age))
-abp <- abp + geom_boxplot()
-abp <- abp + xlab ('Gender') + ylab ('Age') + theme(text=element_text(size=15))
+abp <- ggplot(d, aes(x=gender, y=age)) + geom_boxplot() + xlab ('Gender') + ylab ('Age') + theme(text=element_text(size=15))
 abp
 ```
+
 ```{r, zombies killed boxplot}
-zbp <- ggplot(d, aes(x=gender, y= zombies_killed))
-zbp <- zbp + geom_boxplot()
-zbp <- zbp + xlab ('Gender') + ylab ('Zombies Killed') + theme(text=element_text(size=15))
+zbp <- ggplot(d, aes(x=gender, y= zombies_killed)) + geom_boxplot() + xlab ('Gender') + ylab ('Zombies Killed') + theme(text=element_text(size=15))
 zbp
 ```
+
 ```{r, education boxplot}
-ebp <- ggplot(d, aes(x=gender, y= years_of_education))
-ebp <- ebp + geom_boxplot()
-ebp <- ebp + theme(text=element_text(size=15))
-ebp <- ebp + xlab ('Gender') + ylab ('Education (years)') 
+ebp <- ggplot(d, aes(x=gender, y= years_of_education)) + geom_boxplot() + theme(text=element_text(size=15)) + xlab ('Gender') + ylab ('Education (years)') 
 ebp
 ```
 
@@ -139,30 +132,26 @@ Use {ggplot} to make scatterplots of height and weight in relation to age. Do th
 A relatively strong positive linear relationship between height and age. 
 ```{r, height scatterplot}
 hsp <- ggplot(d, aes(x=age, y=height)) #create a ggplot object
-hsp <- hsp + geom_point(col='forest green') #create scatterplot #col= calls color
+hsp <- hsp + geom_point(col='forest green') #create scatterplot #col= calls color for data points 
 hsp <- hsp + geom_smooth(method = 'lm', col='pink') #add a linear regression line
-hsp <- hsp + theme(text=element_text(size=15)) + ylab('Height') + xlab('Age') #theme lets you adjust any non data elements including font size, color, family etc. 
+hsp <- hsp + theme(text=element_text(size=15)) + ylab('Height') + xlab('Age')
 hsp
 ```
 
 A relatively strong positive linear relationship between weight and age. 
 
 ```{r, weight scatterplot}
-wsp <- ggplot(d, aes(x=age, y=weight))
-wsp <- wsp + geom_point(col='navy')
-wsp <- wsp + geom_smooth(method = 'lm', col= 'maroon')
-wsp <- wsp + theme(text=element_text(size=15)) + ylab('Weight') + xlab('Age')
+wsp <- ggplot(d, aes(x=age, y=weight)) + geom_point(col='navy') + geom_smooth(method = 'lm', col= 'maroon') + theme(text=element_text(size=15)) + ylab('Weight') + xlab('Age')
 wsp
 ```
 
 We can also look at the relationship between height and weight grouped by age. We see a strong positive linear relationship but we can't see any real distinctive patterns by age. 
 
 ```{r}
-age.r <- round(d$age) #round up ages to a whole number 
-sp <- ggplot(d, aes(x=height, y= weight, color = factor(age.r))) #coloring by age is creating a lot of noise, too many possible ages. Might be neater to group ages. Unsure how to do that. 
-sp <- sp + geom_point()
-#sp <- sp + geom_smooth(method = 'lm') #creates a regression line for every age, again too much noise
-sp <- sp + theme(axis.title=element_text(size=15), legend.position = 'bottom')  + labs(x= 'Height', y='Weight', color= 'Age') #color changes the legend title manually. 
+age.r <- round(d$age) #round up ages to a whole number to minimize noise of coloring/factoring by age when creating the scatterplot
+sp <- ggplot(d, aes(x=height, y= weight, color = factor(age.r)))  + geom_point()
+#+ geom_smooth(method = 'lm') #creates a regression line for every age, too much noise
+sp <- sp + theme(axis.title=element_text(size=15), legend.position = 'bottom')  + labs(x= 'Height', y='Weight', color= 'Age') #color changes the legend title manually presumably because we are factoring a variable by color. 
 sp
 ```
 
@@ -171,7 +160,7 @@ sp
 Using histograms and Q-Q plots, check whether the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not (hint: not all are drawn from the normal distribution)? For those that are not normal, can you determine from which common distribution they are drawn?
 
 ```{r, height histogram}
-hist(d$height, main = 'Survivor Heights', xlab= 'Height')
+hist(d$height, main = 'Survivor Heights', xlab= 'Height') #extra arguments are just defining characters as the axes labels to make the plot look better. 
 ```
 
 - A  “Q-Q” plot can be used to look at the normality of a set of data. You can plot the quantiles for your actual data (as the y values) versus quantiles for a correspondingly standardized normal distribution (as the x values). If the two distributions being compared are similar, the points in the plot will approximately lie on the line y = x.
@@ -214,17 +203,59 @@ qqnorm(d$zombies_killed)
 qqline(d$zombies_killed)
 ```
 
-Zombies killed are not normally distributed. From the histogram it looks like this data is following a binomial distribution which is rationale as it starts at 0 and has discrete values based on a number of quanitified successes (kills). Since they are discrete counts there is also a possibility that it could be following a Poisson distribution but I think binomial fits the data better. 
+Zombies killed are not normally distributed. From the histogram it looks like this data is following a Bernoulli distribution which is rationale as it is count data (starts at 0 and has discrete values based on a number of quantified successes (kills)) out of two possible outcomes (killed or not killed). Since they are discrete counts there is also a possibility that it could be following a Poisson distribution but I think Bernoulli fits the data better. 
 
 ```{r, education histogram}
 hist(d$years_of_education,  main = 'Survivors Education', xlab= 'Education (years)')
 ```
+
 ```{r, education qq plot}
 qqnorm(d$years_of_education)
 qqline(d$years_of_education)
 ```
 
 Years of education is not normally distributed. It looks very similarly distributed when compared to the zombies killed data and for the same logic I would assume years of education is following a binomial distribution. 
+
+### Testing for Non-Normal Distributions
+
+We can test for these assumptions by generating Poisson and Bernoulli distributed data and comparing it to the trends we see in our data to see if they fit. 
+
+We can use the binomial r function to test a Bernoulli distribution as Bernoulli is just the binomial distribution with only 2 outcomes. n is the number of realizations, size is the number of trials you want run per realization and the probability is the likelihood of success at each realization, in our case out of two independent outcomes the probability would be 1/2. I set n to 1000 as there are 1000 survivors in the original data set. I set size to 6 because a binomial distribution is defined as the mean being equal to n (number of trials) multiplied by p (probability of success at each trial). We know the mean of our data is almost 3 and the probability is 1/2 so the size should be 6. 
+
+```{r, zombie bernoulli distribution test}
+z.bern.test <- rbinom(n = 1000, size = 6, prob = 1/2) 
+hist(z.bern.test) #Looks more normally distributed than a binomial distribution?
+```
+
+We can also just look at a PMF of a binomial distribution based on our parameters. 
+
+```{r, zombie bernoulli PMF test}
+z.bern.dist <- dbinom(x= 0:6,size= 6, prob= 1/2) 
+barplot(z.bern.dist) #Also looking very normally distributed? 
+```
+
+We can do similar tests with the built in R functions for the Poisson distribution. The Poisson distribution is defined as the mean being equal to the lambda parameter. Again our mean for this variable is close to 3. 
+
+```{r, Zombie Poisson Distribution Test}
+z.pois.test<- rpois(n = 1000, lambda = 3)
+hist(z.pois.test) #Almost identical to our population distribution! 
+```
+
+```{r, zombie poisson PMF test}
+max(d$zombies_killed)
+z.pois.dist <- dpois(0:11, 3) # chose random variable of 11 to generate poisson distribution because in our data the maximum zombies killed is 11 
+barplot(z.pois.dist)
+```
+ 
+We can look at the education variable in a similar way. The mean of the education data is close to 3. We will assume the probability of completing or not completing a year of school is equal (meaning the probability is 1/2). Since these parameters are identical to the zombie data we can just look back at the previous chunks to see how well the education data compares to the generated data. The only graph that would produce a slightly different result is the poisson PMF because the maximum years of education attained was 8 (compared to a maximum of 11 zombies killed)
+
+```{r, education poisson PMF test}
+max(d$years_of_education)
+z.pois.dist <- dpois(0:8, 3) # chose random variable of 8 to generate poisson distribution because in our data the maximum years of education completed is 8
+barplot(z.pois.dist)
+```
+
+So overall my original assumption that the bernoulli distribution was a better fit than the poisson distribution is unlikely based on comparing generated data to the original data set. 
 
 ## Sample Statistics 
 
@@ -284,7 +315,7 @@ sample.sd <- function(x) {
 }
 ```
 
-OR we can use the built in R functions as we are now using sample data. 
+OR we can use the built in R functions as we are now using sample data and either option will return the same result. 
 
 ```{r, height sample sd}
 sample.sd(sample.d$height)
@@ -364,11 +395,9 @@ Construct the 95% confidence interval for each mean. Note that for the variables
 
 CI = statistic +- critical value * standard error 
 
-In this case we will use the sample mean as our statistic and we will assume a critical value of .05 (or CI level of .95). Since the data is normally distributed we can use the qnorm function to tell us the cumulative probability for the specified confidence level/critical value. We divide the critical value by 2 for the calculations because we total the upper and lower tails to get the total critical value. 
+In this case we will use the sample mean as our statistic and we will assume a critical value of .05 (or CI level of .95). Normally distributed variables utilize the qnorm function to tell us the cumulative probability for the specified confidence level/critical value. We know from our population data that height, weight and age are normally distributed. Therefore we could use the following function: 
 
-Therefore we can use the following function: 
 ```{r, Confidence Interval function}
-
 normalCI <-  function(x, CIlevel = 0.95) {
     upper = mean(x) + qnorm(1 - (1 - CIlevel)/2) * sqrt(var(x)/length(x))
     lower = mean(x) + qnorm((1 - CIlevel)/2) * sqrt(var(x)/length(x))
@@ -377,20 +406,37 @@ normalCI <-  function(x, CIlevel = 0.95) {
 }
 ```
 
+Note: We divide the critical value by 2 for the calculations because we total the upper and lower tails to get the total critical value. 
+
+BUT 
+
+If we didn't know this from our population parameter analysis and we only had this one sample of 30 individuals it would be safer and much more likely that we would use a t test instead of the normal z test for our analyses. Therefore we would adjust the function to look like this: 
+
+```{r}
+t.test.CI <-  function(x, CIlevel = 0.95) {
+    upper = mean(x) + qt(1 - (1 - CIlevel)/2, df= length(x)-1) * sqrt(var(x)/length(x))
+    lower = mean(x) + qt((1 - CIlevel)/2, df= length(x)-1) * sqrt(var(x)/length(x))
+    ci <- c(lower, upper)
+    return(ci)
+}
+```
+
 ```{r, height CI}
-hCI <- normalCI(sample.d$height)
-hCI
+normalCI(sample.d$height)
+t.test.CI(sample.d$height)
 ```
 
 ```{r, weight CI}
-wCI <- normalCI(sample.d$weight)
-wCI
+normalCI(sample.d$weight)
+t.test.CI(sample.d$weight)
 ```
 
 ```{r, age CI}
-aCI <- normalCI(sample.d$age)
-aCI
+normalCI(sample.d$age)
+t.test.CI(sample.d$age)
 ```
+
+As you can see the CIs are very close with the t.test CIs slightly wider than the normal CIs to account for uncertainty and error inherent in a smaller sample size. 
 
 #### Non-normal variables (Zombies killed, years of education)
 
@@ -552,7 +598,7 @@ Are they normally distributed? What about for those variables that you concluded
 Generally they all look somewhat normal. They are not perfectly normal but 30 is a relatively low sample size so it is assumed if n was increased the sampling distribution curves would become more and more normally distributed, even the sampling distributions of the samples that came from non-normally distributed variables. The chart that looks the most normal currently belongs to the zombies_killed variable which was one of the non-normally distributed data sets. 
 
 # Challenges: 
-1. Understanding what distribution the population random variables came from? Is there a way to test for this or was it just supposed to be from observation? 
+1. Understanding what distribution the population random variables came from? Attempting to test for non normal distributions by comparing generated to existing data went well for Poisson but I think I went wrong somewhere generating the Binomial/Bernoulli distributions because they look normally distributed? 
 2. The sample function requires the input of a vector. It was taking the length of the data frame as 10 (variables) instead of 1000 (observations). To use the sample function to sample a number of rows from the data frame I had to first subset the data frame.
-3. The looping for question number 6 was particularly difficult but I think most of my problems were with the fact that the loop was generating a list object which meant I needed to subset it using double brackets. Once I realized that the rest was kind of plug and play with the original code given in the modules. 
-4. I would love a more in depth tutorial of ggplot because I always get lost.  
+3. The looping for question number 6 was difficult but I think most of my problems were with the fact that the loop was generating a list object which meant I needed to subset it using double brackets. Once I realized that the rest was kind of plug and play with the original code given in the modules. 
+4. I would love a more in depth tutorial of ggplot because I always get lost. There are a lot of additional functions that can get overwhelming but I got where I wanted to go in the end by looking at the cheat sheet.  
